@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "AIDemos": {
+      "commandName": "Project",
+      "commandLineArgs": "--demo bedrock-movie"
+    },
+    "AIDemos_NoArgs": {
+      "commandName": "Project"
+    }
+  }
+}
