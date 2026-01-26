@@ -1,15 +1,16 @@
-namespace AIDemos.Models;
+using System.Collections.Generic;
 
-public class Movie
+namespace AIDemos.Models
 {
-    public string? Title { get; set; }
-    public string? Summary { get; set; }
-    public string? ReleaseDate { get; set; }
-    public List<string> Directors { get; set; } = new();
-    public List<string> Actors { get; set; } = new();
-}
-
-public class MovieDetailsResponse
-{
-    public List<Movie> Movies { get; set; } = new();
+    public class MovieDto
+    {
+        public string Title { get; set; }
+        public int Year { get; set; }
+        public string Category { get; set; } // TV show or Movie
+        public List<string> Directors { get; set; }
+        public List<string> Actors { get; set; }
+        public string Plot { get; set; }
+        public string Genre { get; set; }
+        public string Rating { get; set; }
+    }
 }

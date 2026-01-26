@@ -11,9 +11,13 @@ switch (demoType.ToLower())
     case "bedrock-movie":
         await RunBedrockMovieDemo();
         break;
+    case "bedrock-tools-movie":
+        await RunBedrockToolsMovieDemo();
+        break;
     default:
         Console.WriteLine("Available demos:");
         Console.WriteLine("  dotnet run -- --demo bedrock-movie");
+        Console.WriteLine("  dotnet run -- --demo bedrock-tools-movie");
         break;
 }
 
@@ -37,6 +41,35 @@ async Task RunBedrockMovieDemo()
         }
         
         Console.WriteLine("=== Response ===\n");
+        Console.WriteLine(result);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+        Console.WriteLine(ex.StackTrace);
+    }
+}
+
+async Task RunBedrockToolsMovieDemo()
+{
+    try
+    {
+        var bedrockToolsService = new BedrockWithConverseToolsService();
+        
+        Console.WriteLine("Enter movie title (e.g., 'The Matrix', 'Inception'):");
+        string movieQuery = "Lord of the rings";
+        
+        Console.WriteLine($"\nRequesting movie info for: {movieQuery}...\n");
+        
+        var result = await bedrockToolsService.GetMovieDetailsAsJson(movieQuery);
+        
+        if (string.IsNullOrEmpty(result))
+        {
+            Console.WriteLine("No response from Bedrock.");
+            return;
+        }
+        
+        Console.WriteLine("=== Movie Information (Structured JSON) ===\n");
         Console.WriteLine(result);
     }
     catch (Exception ex)

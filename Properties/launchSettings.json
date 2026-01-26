@@ -2,7 +2,7 @@
   "profiles": {
     "AIDemos": {
       "commandName": "Project",
-      "commandLineArgs": "--demo bedrock-movie"
+      "commandLineArgs": "--demo bedrock-tools-movie"
     },
     "AIDemos_NoArgs": {
       "commandName": "Project"
