@@ -60,3 +60,7 @@ project.fragment.lock.json
 
 # Mac files
 .DS_Store
+
+# Environment files
+.env.local
+.env.*.local
