@@ -1,5 +1,3 @@
-namespace AIDemos;
-
 public class ArgumentParser
 {
     private readonly string[] _args;

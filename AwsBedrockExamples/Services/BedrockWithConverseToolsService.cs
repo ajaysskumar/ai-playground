@@ -1,4 +1,3 @@
-using AIDemos.Models;
 using Amazon.BedrockRuntime;
 using Amazon.BedrockRuntime.Model;
 using Amazon.Runtime.Documents;
@@ -6,7 +5,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AIDemos.Services;
+namespace AwsBedrockExamples.Services;
 
 public class BedrockWithConverseToolsService
 {

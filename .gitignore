@@ -57,3 +57,6 @@ project.fragment.lock.json
 
 # AWS credentials
 ~/.aws/
+
+# Mac files
+.DS_Store

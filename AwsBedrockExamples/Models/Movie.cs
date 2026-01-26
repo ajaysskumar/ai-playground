@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AIDemos.Models
+namespace AwsBedrockExamples.Models
 {
     public class MovieDto
     {

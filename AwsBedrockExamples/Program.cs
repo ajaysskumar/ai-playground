@@ -1,5 +1,4 @@
-using AIDemos;
-using AIDemos.Services;
+﻿using AwsBedrockExamples.Services;
 
 ArgumentParser parser = new ArgumentParser(args);
 string demoType = parser.GetDemo();

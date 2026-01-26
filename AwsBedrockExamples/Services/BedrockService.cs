@@ -3,7 +3,7 @@ using Amazon.BedrockRuntime.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AIDemos.Services;
+namespace AwsBedrockExamples.Services;
 
 public class BedrockService
 {
