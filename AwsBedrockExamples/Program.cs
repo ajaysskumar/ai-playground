@@ -10,13 +10,13 @@ switch (demoType.ToLower())
     case "bedrock-movie":
         await RunBedrockMovieDemo();
         break;
-    case "bedrock-tools-movie":
+    case "bedrock-movie-converse-tools":
         await RunBedrockToolsMovieDemo();
         break;
     default:
         Console.WriteLine("Available demos:");
         Console.WriteLine("  dotnet run -- --demo bedrock-movie");
-        Console.WriteLine("  dotnet run -- --demo bedrock-tools-movie");
+        Console.WriteLine("  dotnet run -- --demo bedrock-movie-converse-tools");
         break;
 }
 
@@ -26,8 +26,7 @@ async Task RunBedrockMovieDemo()
     {
         var bedrockService = new BedrockService();
         
-        Console.WriteLine("Enter movie title or part of title (e.g., 'Matrix', 'Inception'):");
-        string movieQuery = "Matrix";
+        string movieQuery = "Lord of the rings";
         
         Console.WriteLine($"\nSearching for: {movieQuery}...\n");
         
@@ -55,7 +54,6 @@ async Task RunBedrockToolsMovieDemo()
     {
         var bedrockToolsService = new BedrockWithConverseToolsService();
         
-        Console.WriteLine("Enter movie title (e.g., 'The Matrix', 'Inception'):");
         string movieQuery = "Lord of the rings";
         
         Console.WriteLine($"\nRequesting movie info for: {movieQuery}...\n");

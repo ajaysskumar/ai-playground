@@ -27,7 +27,7 @@ public class BedrockService
                 {
                     new ContentBlock 
                     { 
-                        Text = $"Tell me about the movie: {movieQuery}" 
+                        Text = $"Provide detailed information about the movie '{movieQuery}'. Return the results as a JSON array of objects with the following fields: title (string), year (integer), category (string, Movie/TV), directors (array of strings), actors (array of strings), plot (string), genre (string), rating (string). If no movie is found, return an empty JSON array. The response should be a strict JSON array and nothing else. If multiple movies match, return all of them in the array."
                     }
                 }
             }
@@ -38,7 +38,7 @@ public class BedrockService
         {
             System = [ new SystemContentBlock
             {
-                Text = $"Return the results in JSON format with title, year, director, and plot summary. The fields should be: title, year, director, plot. The response should only contain the JSON array object. If no movie is found, return an empty JSON array. If multiple movies match, return details. The response should be a strict JSON array. Nothing else."
+                Text = "You are a movie information expert. Always return the results as a JSON array of objects with the following fields: title, year, category, directors, actors, plot, genre, rating. The response should be a strict JSON array and nothing else."
             }],
             ModelId = ModelId,
             Messages = messages
@@ -57,6 +57,7 @@ public class BedrockService
             }
         }
 
+        // Optionally, validate/parse the response to ensure it is a JSON array (optional, can be added for robustness)
         return responseText;
     }
 }
