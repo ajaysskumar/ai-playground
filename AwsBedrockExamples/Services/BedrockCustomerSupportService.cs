@@ -1,7 +1,5 @@
 using Amazon.BedrockRuntime;
 using Amazon.BedrockRuntime.Model;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AwsBedrockExamples.Services;
 
@@ -28,7 +26,10 @@ public class BedrockCustomerSupportService
             {
                 new SystemContentBlock
                 {
-                    Text = "You are an AI customer support staff. Be polite, helpful, and concise. Address the customer's issue and provide clear next steps or solutions. Maintain context across the conversation."
+                    Text = "You are an AI customer support staff. Be polite, helpful, and concise. Address the customer's issue and provide clear next steps or solutions. Maintain context across the conversation." +
+                    "Any questions that are not related to movies should be politely refused to answer" +
+                           "Your responses should be in plain text without any special formatting." + 
+                           "It will only contain movie names. Nothing else."
                 }
             },
             ModelId = ModelId,
