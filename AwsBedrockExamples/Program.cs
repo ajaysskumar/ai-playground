@@ -13,10 +13,14 @@ switch (demoType.ToLower())
     case "bedrock-movie-converse-tools":
         await RunBedrockToolsMovieDemo();
         break;
+    case "bedrock-customer-support":
+        await RunBedrockCustomerSupportChat();
+        break;
     default:
         Console.WriteLine("Available demos:");
         Console.WriteLine("  dotnet run -- --demo bedrock-movie");
         Console.WriteLine("  dotnet run -- --demo bedrock-movie-converse-tools");
+        Console.WriteLine("  dotnet run -- --demo bedrock-customer-support");
         break;
 }
 
@@ -40,6 +44,57 @@ async Task RunBedrockMovieDemo()
         
         Console.WriteLine("=== Response ===\n");
         Console.WriteLine(result);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+        Console.WriteLine(ex.StackTrace);
+    }
+}
+
+
+// Customer support chat demo
+async Task RunBedrockCustomerSupportChat()
+{
+    try
+    {
+        var supportService = new BedrockCustomerSupportService();
+        var conversation = new List<Amazon.BedrockRuntime.Model.Message>();
+        Console.WriteLine("\nWelcome to AI Customer Support! Type 'Exit Chat' to end the conversation.\n");
+        while (true)
+        {
+            Console.Write("You: ");
+            var userInput = Console.ReadLine();
+            if (string.Equals(userInput, "Exit Chat", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("\nThank you for chatting with AI Customer Support. Goodbye!\n");
+                break;
+            }
+            // Add user message to conversation
+            conversation.Add(new Amazon.BedrockRuntime.Model.Message
+            {
+                Role = "user",
+                Content = new List<Amazon.BedrockRuntime.Model.ContentBlock>
+                {
+                    new Amazon.BedrockRuntime.Model.ContentBlock { Text = userInput }
+                }
+            });
+
+            // Get AI response
+            var response = await supportService.GetSupportResponse(conversation);
+
+            // Add assistant response to conversation
+            conversation.Add(new Amazon.BedrockRuntime.Model.Message
+            {
+                Role = "assistant",
+                Content = new List<Amazon.BedrockRuntime.Model.ContentBlock>
+                {
+                    new Amazon.BedrockRuntime.Model.ContentBlock { Text = response }
+                }
+            });
+
+            Console.WriteLine($"AI: {response}\n");
+        }
     }
     catch (Exception ex)
     {

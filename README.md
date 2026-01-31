@@ -23,8 +23,9 @@ aws_secret_access_key=YOUR_SECRET_KEY
 The services read these credentials to authenticate requests to AWS Bedrock. Make sure this file is present and correctly configured before running the demos.
 
 ## Services Overview
-- **BedrockService**: Handles basic interactions with AWS Bedrock, such as sending prompts and receiving responses.
-- **BedrockWithConverseToolsService**: Extends BedrockService to support advanced scenarios, including tool use and multi-step conversations.
+ - **BedrockService**: Handles basic interactions with AWS Bedrock, such as sending prompts and receiving responses.
+ - **BedrockWithConverseToolsService**: Extends BedrockService to support advanced scenarios, including tool use and multi-step conversations.
+ - **BedrockCustomerSupportService**: Demonstrates an AI-powered customer support staff using Bedrock's Converse API. Supports multi-turn, context-aware chat interactions.
 
 ## How to Run
 
@@ -47,11 +48,20 @@ dotnet run --project AwsBedrockExamples -- --demo bedrock-movie
 
 #### Example: Use Bedrock with Converse Tools
 ```sh
-dotnet run --project AwsBedrockExamples -- --demo bedrock-tools-movie
+dotnet run --project AwsBedrockExamples -- --demo bedrock-movie-converse-tools
 ```
 
+#### Example: AI Customer Support Chat
+```sh
+dotnet run --project AwsBedrockExamples -- --demo bedrock-customer-support
+```
+This will start an interactive chat session with an AI customer support agent. Type your questions and issues, and enter `Exit Chat` to end the conversation.
+
 ### Command-Line Arguments
-- `--demo` - Runs a demo using the Movie model. Acceptable values are `bedrock-movie`, `bedock-tools-movie`
+ - `--demo` - Runs a demo. Acceptable values are:
+   - `bedrock-movie` - Basic movie info demo
+   - `bedrock-movie-converse-tools` - Structured movie info with tools
+   - `bedrock-customer-support` - Interactive customer support chat demo
 - Additional arguments may be supported; see `ArgumentParser.cs` for details
 
 ## Notes
