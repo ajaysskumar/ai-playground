@@ -1,4 +1,5 @@
-﻿using AwsBedrockExamples.Services;
+﻿using AwsBedrockExamples.Helpers;
+using AwsBedrockExamples.Services;
 
 ArgumentParser parser = new ArgumentParser(args);
 string demoType = parser.GetDemo();
@@ -30,7 +31,7 @@ async Task RunBedrockMovieDemo()
     {
         var bedrockService = new BedrockService();
         
-        string movieQuery = "Lord of the rings";
+        string movieQuery = "Inception";
         
         Console.WriteLine($"\nSearching for: {movieQuery}...\n");
         
@@ -44,6 +45,24 @@ async Task RunBedrockMovieDemo()
         
         Console.WriteLine("=== Response ===\n");
         Console.WriteLine(result);
+        Console.WriteLine("=== Formatted JSON ===\n");
+        // Extract the 'text' property from the response JSON
+        string textValue = result;
+        try
+        {
+            using var doc = System.Text.Json.JsonDocument.Parse(result);
+            var contentArray = doc.RootElement.GetProperty("content");
+            if (contentArray.ValueKind == System.Text.Json.JsonValueKind.Array && contentArray.GetArrayLength() > 0)
+            {
+                var firstContent = contentArray[0];
+                if (firstContent.TryGetProperty("text", out var textProp))
+                {
+                    textValue = textProp.GetString();
+                }
+            }
+        }
+        catch { /* fallback to original result if parsing fails */ }
+        Console.WriteLine(JsonUtils.ParseEscapedJson(textValue));
     }
     catch (Exception ex)
     {
@@ -109,7 +128,7 @@ async Task RunBedrockToolsMovieDemo()
     {
         var bedrockToolsService = new BedrockWithConverseToolsService();
         
-        string movieQuery = "Lord of the rings";
+        string movieQuery = "Inception";
         
         Console.WriteLine($"\nRequesting movie info for: {movieQuery}...\n");
         
