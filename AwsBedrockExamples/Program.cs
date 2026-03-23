@@ -17,11 +17,15 @@ switch (demoType.ToLower())
     case "bedrock-customer-support":
         await RunBedrockCustomerSupportChat();
         break;
+    case "bedrock-guardrails":
+        await RunBedrockGuardrailsDemo();
+        break;
     default:
         Console.WriteLine("Available demos:");
         Console.WriteLine("  dotnet run -- --demo bedrock-movie");
         Console.WriteLine("  dotnet run -- --demo bedrock-movie-converse-tools");
         Console.WriteLine("  dotnet run -- --demo bedrock-customer-support");
+        Console.WriteLine("  dotnet run -- --demo bedrock-guardrails");
         break;
 }
 
@@ -114,6 +118,34 @@ async Task RunBedrockCustomerSupportChat()
 
             Console.WriteLine($"AI: {response}\n");
         }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error: {ex.Message}");
+        Console.WriteLine(ex.StackTrace);
+    }
+}
+
+async Task RunBedrockGuardrailsDemo()
+{
+    try
+    {
+        var service = new BedrockGuardrailsDemoService();
+
+        Console.WriteLine("=== AWS Bedrock Guardrails Demo ===");
+        Console.WriteLine("This demo creates a Guardrail with content filters, topic denial, and PII redaction.");
+        Console.WriteLine("Test it interactively with custom questions.\n");
+
+        // Step 1: Provision guardrail
+        var (guardrailId, version) = await service.CreateAndPublishGuardrailAsync();
+
+        // Step 2: Run interactive mode
+        await service.RunInteractiveModeAsync(guardrailId, version);
+
+        // Step 3: Cleanup
+        await service.DeleteGuardrailAsync(guardrailId);
+
+        Console.WriteLine("=== Demo complete ===");
     }
     catch (Exception ex)
     {
