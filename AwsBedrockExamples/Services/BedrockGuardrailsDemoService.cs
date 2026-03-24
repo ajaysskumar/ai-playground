@@ -182,91 +182,75 @@ public class BedrockGuardrailsDemoService
             ?? "[no text content]";
 
         Console.WriteLine($"Stop Reason: {response.StopReason}");
-        Console.WriteLine($"Status : {(intervened ? "GUARDRAIL INTERVENED" : "PASSED")}");
-        Console.WriteLine($"Model  : {outputText}");
-
-        // Print which filter categories fired
-        if (response.Trace?.Guardrail != null)
+        
+        string statusMessage = "PASSED";
+        if (intervened && response.Trace?.Guardrail != null)
         {
-            PrintGuardrailTrace(response.Trace.Guardrail);
+            string policyName = GetViolatedPolicy(response.Trace.Guardrail);
+            statusMessage = $"GUARDRAIL INTERVENED - {policyName}";
         }
         else if (intervened)
         {
-            Console.WriteLine("  [Guardrail Trace] No detailed trace available");
+            statusMessage = "GUARDRAIL INTERVENED";
         }
+        
+        Console.WriteLine($"Status : {statusMessage}");
+        Console.WriteLine($"Model  : {outputText}");
     }
 
     private static void PrintGuardrailTrace(GuardrailTraceAssessment trace)
     {
-        Console.WriteLine("  [Guardrail Trace]");
-        
-        // Note: PII redaction happens transparently before the model sees input,
-        // so explicit PII assessment traces may not always appear—only policy violations
-        // (content filters, topic denials) will show in the trace.
-        if (trace.InputAssessment != null && trace.InputAssessment.Count > 0)
-        {
-            Console.WriteLine("    Input Assessment:");
-            Console.WriteLine($"    Input Assessment Count: {trace.InputAssessment.Count}");
-            foreach (var (key, assessment) in trace.InputAssessment)
-            {
-                PrintAssessmentDetailed(assessment, "Input");
-            }
-        }
-        else
-        {
-            Console.WriteLine("    Input Assessment: None");
-        }
-
-        if (trace.OutputAssessments != null && trace.OutputAssessments.Count > 0)
-        {
-            Console.WriteLine("    Output Assessments:");
-            foreach (var (key, assessments) in trace.OutputAssessments)
-            {
-                foreach (var assessment in assessments)
-                    PrintAssessmentDetailed(assessment, "Output");
-            }
-        }
-        else
-        {
-            Console.WriteLine("    Output Assessments: None");
-        }
+        // Trace details are available via response.Trace.Guardrail if needed for debugging
     }
 
-    private static void PrintAssessmentDetailed(GuardrailAssessment assessment, string direction)
+    private static string GetViolatedPolicy(GuardrailTraceAssessment trace)
     {
-        bool foundAny = false;
-        
-        if (assessment.ContentPolicy?.Filters != null && assessment.ContentPolicy.Filters.Count > 0)
+        var violations = new List<string>();
+
+        // Check input assessments
+        if (trace.InputAssessment != null)
         {
-            foundAny = true;
-            foreach (var filter in assessment.ContentPolicy.Filters)
+            foreach (var (_, assessment) in trace.InputAssessment)
             {
-                Console.WriteLine($"      [{direction} Content Filter] {filter.Type}: Action={filter.Action}, Confidence={filter.Confidence}");
+                if (assessment.ContentPolicy?.Filters?.Count > 0)
+                    violations.Add("Content Filter");
+                if (assessment.TopicPolicy?.Topics?.Count > 0)
+                {
+                    var topicNames = assessment.TopicPolicy.Topics
+                        .Where(t => !string.IsNullOrEmpty(t.Name))
+                        .Select(t => t.Name)
+                        .Distinct();
+                    violations.Add($"Topic Policy: {string.Join(", ", topicNames)}");
+                }
+                if (assessment.SensitiveInformationPolicy?.PiiEntities?.Count > 0)
+                    violations.Add("PII");
             }
         }
 
-        if (assessment.TopicPolicy?.Topics != null && assessment.TopicPolicy.Topics.Count > 0)
+        // Check output assessments
+        if (trace.OutputAssessments != null)
         {
-            foundAny = true;
-            foreach (var topic in assessment.TopicPolicy.Topics)
+            foreach (var (_, assessments) in trace.OutputAssessments)
             {
-                Console.WriteLine($"      [{direction} Topic Policy] {topic.Name}: Action={topic.Action}");
+                foreach (var assessment in assessments)
+                {
+                    if (assessment.ContentPolicy?.Filters?.Count > 0)
+                        violations.Add("Content Filter");
+                    if (assessment.TopicPolicy?.Topics?.Count > 0)
+                    {
+                        var topicNames = assessment.TopicPolicy.Topics
+                            .Where(t => !string.IsNullOrEmpty(t.Name))
+                            .Select(t => t.Name)
+                            .Distinct();
+                        violations.Add($"Topic Policy: {string.Join(", ", topicNames)}");
+                    }
+                    if (assessment.SensitiveInformationPolicy?.PiiEntities?.Count > 0)
+                        violations.Add("PII");
+                }
             }
         }
 
-        if (assessment.SensitiveInformationPolicy?.PiiEntities != null && assessment.SensitiveInformationPolicy.PiiEntities.Count > 0)
-        {
-            foundAny = true;
-            foreach (var pii in assessment.SensitiveInformationPolicy.PiiEntities)
-            {
-                Console.WriteLine($"      [{direction} PII] {pii.Type}: Action={pii.Action}");
-            }
-        }
-        
-        if (!foundAny)
-        {
-            Console.WriteLine($"      [{direction}] No policy violations detected");
-        }
+        return violations.Count > 0 ? string.Join(", ", violations.Distinct()) : "Unknown Policy";
     }
 
     // -------------------------------------------------------------------------
